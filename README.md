@@ -3,6 +3,7 @@
 <video src="https://i.imgur.com/WlymY0V.mp4" width="320" height="200"></video>
 
 An in-progress realtime destruction system for use with the Unity game engine, this project aims to allow for more dynamic procedural destruction than is possible using precomputation methods. This fracturing allows for the fragmentation of objects into many pieces in real time.
+
 ![mesh example 1](https://i.imgur.com/gELhGgu.png)
 
 ## Mesh Splitting
@@ -10,7 +11,9 @@ The current version of this system is designed for use with manifold, convex mes
 The single material limitation is simply due to an assumption by the current implementation, and is easily remidied.
 The additional treatment of concave meshes is possible, but would require tracking and checking for connected components with each fracture (to ensure disconnected pieces of geometry are seperated into independent objects, and identifying independent faces along the cut plane). Such a feature has not yet been implemented.
 The manifold mesh requirement should remain, as user-expected behaviour for non-manifold meshes would not be universal.
+
 ![mesh example 2](https://i.imgur.com/49Avcsa.png)
+
 ### How it Works
 Meshes in Unity are defined using an array of indices, representing triangles, which reference vertices in a vertex array. UV, normal, tangent, and other datasets map to the vertex array 1:1. For the sake of mesh splitting, a new collection is created, much like the triangle array, but instead defining ngons; vertices are still indexed, with sequences of indices defining an ngon, and these sequences seperated by values of -1. Mesh Splits are performed on this ngon data, and the new mesh data is generated using these results. This provides one major advantage over working directly with triangle data: the resulting mesh does not contain redundant data, while performing such an operation on triangle data can lead to a runaway increase in geometry complexity (an issue found in earlier tests).
 
