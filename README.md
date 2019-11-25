@@ -1,10 +1,8 @@
 # Realtime Fracture
 
-<video src="https://i.imgur.com/WlymY0V.mp4" width="320" height="200"></video>
+An in-progress realtime destruction system for use with the Unity game engine, this project aims to allow for more dynamic procedural destruction than is possible using precomputation methods, e.g. by shattering from a point of impact. This fracturing allows for the fragmentation of objects into many pieces in real time.
 
-An in-progress realtime destruction system for use with the Unity game engine, this project aims to allow for more dynamic procedural destruction than is possible using precomputation methods. This fracturing allows for the fragmentation of objects into many pieces in real time.
-
-![mesh example 1](https://i.imgur.com/gELhGgu.png)
+![collision example 1](https://i.imgur.com/mmOJ5Le.gif)
 
 ## Mesh Splitting
 The current version of this system is designed for use with manifold, convex meshes using a single material.
@@ -22,7 +20,9 @@ There are a number of approximations involved in the physics fracturing procedur
 * For instantaneous collisions, the total energy loss due to the collision is used to calculate the amount of energy available to fracture a breakable object. While this works well for inelastic collisions and glancing collisions, it does not reflect the reality of elastic collisions very well. Instead, it may be better to use the total energy of the collision, account for energy losses due to fractures and then use the resulting energy loss to alter the objects' momenta.
 * Two surface energies are attributed to a breakable object; a **Fracture Energy** which is analogous to chemical activation energy, and a **Surface Energy** which is analogous to activation energy minus the enthalpy of formation. The naming of these variables is obviously not ideal, and subject to change.
 * The surface area of a cut, used to calculate the total energy neccesary to perform a bisection, is approximately proportional to the cross section of an ellipse which fully encompases the bounding box, though this needs to be verified and is also subject to change. The intertia tensor could be used to provide a more accurate measure of this cross section, or it could be checked explicitly after performing mesh splitting calculations, though this would be significantly more expensive for low energy collisions, as it requires performing mesh split calculations even when no split takes place.
-* The position and orientation of bifurcation planes is chosen based on a few criteria. The position of the plane is determined based on an impact point of the collision, with a random offset determined by the **Mean Fault Distance**, with a distribution based on the expected distance to the nearest point of a 3D Poisson point process. The normal of the plane is simply weighted by the size vector of the objects' bounding box.
-* **Fracture Min Mass** is a variables used to prevent the fracturing of objects into unreasonably small fragments. Fragments with mass below the given minimum limit will no longer fracture (note that mass is divided between fragments after fractures based on bounding box size).
+* The position and orientation of bifurcation planes is chosen based on a few criteria. The position of the plane is determined based on an impact point of the collision, with a random offset determined by the **Mean Fault Distance**, with a distribution based on the expected distance to the nearest point of a 3D Poisson point process. The normal of the plane is simply a random vector, weighted by the size vector of the objects' bounding box.
+* **Fracture Min Mass** is a variable used to prevent the fracturing of objects into unreasonably small fragments. Fragments with mass below the given minimum limit will no longer fracture (note that mass is divided between fragments after fractures based on bounding box size).
 * Collisions with insuffucient energy to cause fractures over circular area with radius **Min Fracture Radius** are ignored, for performance consideration.
 * Continuous collisions, e.g. force applied by a press, are not currently handled, as the 'activation energy' model above is unuseable for such situations. A new model would need to be created to handle these collisions, if the need arises.
+
+![mesh example 1](https://i.imgur.com/gELhGgu.png)
