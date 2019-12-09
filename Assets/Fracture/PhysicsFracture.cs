@@ -203,6 +203,7 @@ public class PhysicsFracture : MonoBehaviour
             //TODO: Consider adding normal force from mesh split.
             //How much of the surface energy goes toward future fractures, and how much toward normal forces? Why?
             otherRigidbody.velocity = rigidbody.velocity;
+            otherRigidbody.angularVelocity = rigidbody.angularVelocity;
 
             otherFracture.Fracture(point, energy);
         }
