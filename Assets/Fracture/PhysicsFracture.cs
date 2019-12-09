@@ -120,7 +120,7 @@ public class PhysicsFracture : MonoBehaviour
 
         // breaks along lower energy planes should be more common
         Vector3 extents = meshCollider.bounds.extents * 1.73f;
-        Vector3 normal = Vector3.Scale(Random.onUnitSphere, extents).normalized;
+        Vector3 normal = Vector3.Scale(Random.onUnitSphere, Vector3.Scale(extents,extents)).normalized;
 
         Plane plane = new Plane(normal, point + Random.onUnitSphere * GetFaultDistance());
         // need a way to get the center of the bounds; what space is this in again? global?

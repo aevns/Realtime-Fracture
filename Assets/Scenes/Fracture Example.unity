@@ -36699,12 +36699,12 @@ PrefabInstance:
     - target: {fileID: 6527096279975840908, guid: 2cb229ad2bdd3f844b49d4a6a610ee6e,
         type: 3}
       propertyPath: fractureEnergy
-      value: 1
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 6527096279975840908, guid: 2cb229ad2bdd3f844b49d4a6a610ee6e,
         type: 3}
       propertyPath: fragmentMinMass
-      value: 5
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2cb229ad2bdd3f844b49d4a6a610ee6e, type: 3}
