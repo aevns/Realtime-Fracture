@@ -120,7 +120,7 @@ public class PhysicsFracture : MonoBehaviour
 
         // breaks along lower energy planes should be more common
         Vector3 extents = meshCollider.bounds.extents * 1.73f;
-        Vector3 normal = Vector3.Scale(Random.onUnitSphere, Vector3.Scale(extents,extents)).normalized;
+        Vector3 normal = Vector3.Scale(Random.onUnitSphere, Vector3.Scale(extents, extents)).normalized;
 
         Plane plane = new Plane(normal, point + Random.onUnitSphere * GetFaultDistance());
         // need a way to get the center of the bounds; what space is this in again? global?
@@ -134,18 +134,18 @@ public class PhysicsFracture : MonoBehaviour
         }
         else if (normal.z == 1)
         {
-            crossSectionArea = Mathf.PI * (extents.z * extents.z - planeDist2) / (extents.z);
+            crossSectionArea = Mathf.PI * extents.x * extents.y * (1 - planeDist2 / (extents.z * extents.z));
         }
         else
         {
             Vector3 n2 = Vector3.Scale(normal, normal);
             Vector3 e2 = Vector3.Scale(extents, extents);
-            float v1 = e2.x * e2.x * n2.x + e2.y * e2.y * n2.y;
-            float v2 = Vector3.Dot(n2, e2);
-            float v3 = e2.x * n2.x + e2.y * n2.y;
-            float v4 = e2.z * e2.z * n2.z * (n2.x + n2.y);
-            float v5 = extents.x * extents.y * extents.z;
-            crossSectionArea = Mathf.PI * Mathf.Sqrt(v1 * (v2 - planeDist2) * (v2 - planeDist2) * (v3 * v3 + v4) / (v2 * v2 * v2)) / (v3);
+            float v1 = extents.x * extents.y * extents.z;
+            float v2 = Vector3.Dot(e2, n2);
+            float u1 = n2.x + n2.y;
+            float u2 = e2.x * n2.x + e2.y * n2.y;
+            float u3 = e2.x * e2.x * n2.x + e2.y * e2.y * n2.y;
+            crossSectionArea = Mathf.PI * v1 * (v2 - planeDist2) * Mathf.Sqrt(u1 * (u2 * u2 + u3 * n2.z)) / (u2 * Mathf.Sqrt(v2 * v2 * v2));
         }
         //print(": " + extents + " : " + crossSectionArea);
 
