@@ -119,26 +119,37 @@ public class PhysicsFracture : MonoBehaviour
         MeshCollider meshCollider = GetComponent<MeshCollider>();
 
         // breaks along lower energy planes should be more common
-        Vector3 extents = meshCollider.bounds.extents;
-        Vector3 normal = Vector3.Scale(Random.onUnitSphere, extents);
+        Vector3 extents = meshCollider.bounds.extents * 1.73f;
+        Vector3 normal = Vector3.Scale(Random.onUnitSphere, extents).normalized;
 
         Plane plane = new Plane(normal, point + Random.onUnitSphere * GetFaultDistance());
+        // need a way to get the center of the bounds; what space is this in again? global?
+        float planeDist2 = plane.GetDistanceToPoint(meshCollider.bounds.center);
+        planeDist2 *= planeDist2;
 
-        // falloff is based on an ellipsoid that encomasses the entire volume
-        Ray ray = new Ray(meshCollider.bounds.center, -Vector3.Scale(plane.normal, extents));
-        plane.Raycast(ray, out float rayDist);
-        Vector3 rPos = ray.GetPoint(rayDist) - meshCollider.bounds.center;
-        float radialFactor = 1f - 0.33f * (
-            rPos.x * rPos.x / (extents.x * extents.x)
-            + rPos.y * rPos.y / (extents.y * extents.y)
-            + rPos.z * rPos.z / (extents.z * extents.z)
-            );
+        float crossSectionArea;
+        if (planeDist2 / Vector3.Scale(normal, extents).sqrMagnitude > 1)
+        {
+            crossSectionArea = 0;
+        }
+        else if (normal.z == 1)
+        {
+            crossSectionArea = Mathf.PI * (extents.z * extents.z - planeDist2) / (extents.z);
+        }
+        else
+        {
+            Vector3 n2 = Vector3.Scale(normal, normal);
+            Vector3 e2 = Vector3.Scale(extents, extents);
+            float v1 = e2.x * e2.x * n2.x + e2.y * e2.y * n2.y;
+            float v2 = Vector3.Dot(n2, e2);
+            float v3 = e2.x * n2.x + e2.y * n2.y;
+            float v4 = e2.z * e2.z * n2.z * (n2.x + n2.y);
+            float v5 = extents.x * extents.y * extents.z;
+            crossSectionArea = Mathf.PI * Mathf.Sqrt(v1 * (v2 - planeDist2) * (v2 - planeDist2) * (v3 * v3 + v4) / (v2 * v2 * v2)) / (v3);
+        }
+        //print(": " + extents + " : " + crossSectionArea);
 
-        // Approximate area of an ellipse section cut
-        float centerArea = Mathf.PI * extents.x * extents.y * extents.z / Vector3.Scale(plane.normal, extents).magnitude;
-        float crossSectionArea = radialFactor * centerArea;
-
-        // if the energy is too low to fracture, pr the plane cannot intersect the object, cancel fragmentation
+        // if the energy is too low to fracture, or the plane cannot intersect the object, cancel fragmentation
         if (crossSectionArea <= 0f || energy <= fractureEnergy * crossSectionArea)
         {
             return;
